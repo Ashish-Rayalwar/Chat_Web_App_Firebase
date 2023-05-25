@@ -2,7 +2,7 @@
 
 ## A real-time chat application built with React and Node.js.
 
-## Deploy Link :- https://funny-lamington-2a92e6.netlify.app/
+## Deploy Link :- https://646fbefad54e571d7a07f2b7--lovely-tiramisu-584175.netlify.app/
 
 ## Description
 
