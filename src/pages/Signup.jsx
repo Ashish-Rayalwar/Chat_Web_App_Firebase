@@ -22,7 +22,7 @@ const Signup = () => {
     const email = e.target[1].value;
     const password = e.target[2].value;
     const file = e.target[3].files[0];
-
+    window.alert("wait for few secconds");
     try {
       const res = await createUserWithEmailAndPassword(auth, email, password);
       const date = new Date().getTime();
@@ -44,7 +44,7 @@ const Signup = () => {
               photoURL: downloadURL,
             });
             await setDoc(doc(db, "userChats", res.user.uid), {});
-            navigate("/login");
+            navigate("/");
           } catch (err) {
             console.log(err);
             setErr(true);
