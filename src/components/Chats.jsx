@@ -13,7 +13,7 @@ const Chats = () => {
           alt=""
         />
         <div className="userChatInfo">
-          <span>sadf</span>
+          <span>nimish</span>
           <p>dsfs</p>
         </div>
       </div>
