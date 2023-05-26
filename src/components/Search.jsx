@@ -12,32 +12,16 @@ import {
 import { db } from "../Firebase";
 import { AuthContext } from "../context/Auth";
 import { useContext, useState } from "react";
+import { ChatContext } from "../context/ChatContext";
 
 const Search = () => {
   const [username, setUsername] = useState("");
-  const [user, setUser] = useState(null);
+  const [searchedUsers, setSearchedUsers] = useState(null);
   const [err, setErr] = useState(false);
   const { currentUser } = useContext(AuthContext);
+  const { dispatch } = useContext(ChatContext); // Assuming you have a ChatContext for managing chats
+
   const handleSearch = async () => {
-    // const q = query(
-    //   collection(db, "users"),
-    //   where("displayName", "==", username)
-    // );
-    // const q = query(
-    //   collection(db, "users"),
-    //   where("displayName", ">=", username),
-    //   where("displayName", "<=", username + "\uf8ff")
-    // );
-
-    // try {
-    //   const querySnapshot = await getDocs(q);
-    //   querySnapshot.forEach((doc) => {
-    //     setUser(doc.data());
-    //   });
-    // } catch (err) {
-    //   setErr(true);
-    // }
-
     const q = query(
       collection(db, "users"),
       where("displayName", ">=", username),
@@ -47,7 +31,7 @@ const Search = () => {
     try {
       const querySnapshot = await getDocs(q);
       const users = querySnapshot.docs.map((doc) => doc.data());
-      setUser(users);
+      setSearchedUsers(users);
       setErr(false); // Reset the error state if users are found
     } catch (err) {
       console.log(err);
@@ -59,46 +43,50 @@ const Search = () => {
     (e.code === "Enter" || e.type === "click") && handleSearch();
   };
 
-  const handleSelect = async () => {
-    //check whether the group(chats in firestore) exists, if not create
+  const handleSelect = async (selectedUser) => {
     const combinedId =
-      currentUser.uid > user.uid
-        ? currentUser.uid + user.uid
-        : user.uid + currentUser.uid;
-
-    console.log(combinedId);
-    console.log(currentUser.uid);
-    console.log(user.uid);
+      currentUser.uid > selectedUser.uid
+        ? currentUser.uid + selectedUser.uid
+        : selectedUser.uid + currentUser.uid;
 
     try {
       const res = await getDoc(doc(db, "chats", combinedId));
 
       if (!res.exists()) {
-        //create a chat in chats collection
+        // Create a chat in the chats collection
         await setDoc(doc(db, "chats", combinedId), { messages: [] });
 
-        //create user chats
+        // Create user chats
         await updateDoc(doc(db, "userChats", currentUser.uid), {
-          [combinedId + ".userInfo"]: {
-            uid: user.uid,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
+          [combinedId]: {
+            userInfo: {
+              uid: selectedUser.uid,
+              displayName: selectedUser.displayName,
+              photoURL: selectedUser.photoURL,
+            },
+            date: serverTimestamp(),
           },
-          [combinedId + ".date"]: serverTimestamp(),
         });
 
-        await updateDoc(doc(db, "userChats", user.uid), {
-          [combinedId + ".userInfo"]: {
-            uid: currentUser.uid,
-            displayName: currentUser.displayName,
-            photoURL: currentUser.photoURL,
+        await updateDoc(doc(db, "userChats", selectedUser.uid), {
+          [combinedId]: {
+            userInfo: {
+              uid: currentUser.uid,
+              displayName: currentUser.displayName,
+              photoURL: currentUser.photoURL,
+            },
+            date: serverTimestamp(),
           },
-          [combinedId + ".date"]: serverTimestamp(),
         });
       }
-    } catch (err) {}
 
-    setUser(null);
+      // Update the selected user in the chat context
+      dispatch({ type: "CHANGE_USER", payload: selectedUser });
+    } catch (err) {
+      console.log(err);
+    }
+
+    setSearchedUsers(null);
     setUsername("");
   };
 
@@ -107,30 +95,24 @@ const Search = () => {
       <div className="searchForm">
         <input
           type="text"
-          placeholder="Find a user"
+          placeholder="Add a user"
           onKeyDown={handleKey}
           onChange={(e) => setUsername(e.target.value)}
           value={username}
         />
         <label onClick={handleSearch}>
-          <span class="material-symbols-outlined">search</span>
+          <span className="material-symbols-outlined">search</span>
         </label>
       </div>
       {err && <span>User not found!</span>}
-      {
-        //   {user && (
-        //   <div className="userChat" onClick={handleSelect}>
-        //     <img src={user.photoURL} alt="" />
-        //     <div className="userChatInfo">
-        //       <span>{user.displayName}</span>
-        //     </div>
-        //   </div>
-        // )}
-      }
-      {user && (
+      {searchedUsers && (
         <>
-          {user.map((user) => (
-            <div className="userChat" onClick={handleSelect}>
+          {searchedUsers.map((user, i) => (
+            <div
+              className="userChat"
+              key={i}
+              onClick={() => handleSelect(user)}
+            >
               <img src={user.photoURL} alt="" />
               <div className="userChatInfo">
                 <span>{user.displayName}</span>

@@ -30,6 +30,18 @@ const Input = () => {
 
   const handleSend = async () => {
     try {
+      console.log(text);
+      console.log(img);
+      console.log(document);
+      if (text == "" && !img && !document) {
+        window.alert(
+          "Please enter a message, select an image, or choose a document."
+        );
+        console.log(
+          "Please enter a message, select an image, or choose a document."
+        );
+        return;
+      }
       if (img) {
         setUploading(true); // Set uploading state to true
         const storageReference = storageRef(storage, uuid());
@@ -159,25 +171,21 @@ const Input = () => {
         <input
           type="file"
           style={{ display: "none" }}
-          id="file"
+          id="fileInput"
           onChange={(e) => setImg(e.target.files[0])}
         />
-        <label htmlFor="file">
-          <label htmlFor="file">
-            <img src={!img ? Add : null} alt="" />
-          </label>
+        <label htmlFor="fileInput">
+          <img src={!img ? Add : null} alt="" />
           {img && renderThumbnail()}
         </label>
         <input
           type="file"
           style={{ display: "none" }}
-          id="filed"
+          id="fileInputd"
           onChange={(e) => setDocument(e.target.files[0])}
         />
-        <label htmlFor="filed">
-          <label htmlFor="filed">
-            <img src={!document ? Attach : null} alt="" />
-          </label>
+        <label htmlFor="fileInputd">
+          <img src={!document ? Attach : null} alt="" />
           {document && renderThumbnail()}
         </label>
         {uploading ? (

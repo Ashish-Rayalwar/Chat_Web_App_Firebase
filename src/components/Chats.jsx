@@ -27,10 +27,14 @@ const Chats = () => {
   const handleSelect = (u) => {
     dispatch({ type: "CHANGE_USER", payload: u });
   };
+
+  console.log(Object.entries(chats));
+
   return (
     <div className="chats">
       {Object.entries(chats)
         ?.sort((a, b) => b[1].date - a[1].date)
+        .slice(0, 4) // Limit the number of chats to 4
         .map((chat) => {
           const userInfo = chat[1].userInfo;
           const lastMessage = chat[1].lastMessage;
