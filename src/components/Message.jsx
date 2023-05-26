@@ -12,6 +12,9 @@ const Message = ({ message }) => {
     ref.current?.scrollIntoView({ behavior: "smooth" });
   }, [message]);
 
+  const OpenDocument = () => {
+    return window.open(message.document);
+  };
   return (
     <div
       ref={ref}
@@ -31,6 +34,7 @@ const Message = ({ message }) => {
       <div className="messageContent">
         <p>{message.text}</p>
         {message.img && <img src={message.img} alt="" />}
+        {message.document && <p onClick={OpenDocument}>Document...📃</p>}
       </div>
     </div>
   );
