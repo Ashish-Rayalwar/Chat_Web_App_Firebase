@@ -19,23 +19,44 @@ const Search = () => {
   const [err, setErr] = useState(false);
   const { currentUser } = useContext(AuthContext);
   const handleSearch = async () => {
+    // const q = query(
+    //   collection(db, "users"),
+    //   where("displayName", "==", username)
+    // );
+    // const q = query(
+    //   collection(db, "users"),
+    //   where("displayName", ">=", username),
+    //   where("displayName", "<=", username + "\uf8ff")
+    // );
+
+    // try {
+    //   const querySnapshot = await getDocs(q);
+    //   querySnapshot.forEach((doc) => {
+    //     setUser(doc.data());
+    //   });
+    // } catch (err) {
+    //   setErr(true);
+    // }
+
     const q = query(
       collection(db, "users"),
-      where("displayName", "==", username)
+      where("displayName", ">=", username),
+      where("displayName", "<=", username + "\uf8ff")
     );
 
     try {
       const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        setUser(doc.data());
-      });
+      const users = querySnapshot.docs.map((doc) => doc.data());
+      setUser(users);
+      setErr(false); // Reset the error state if users are found
     } catch (err) {
+      console.log(err);
       setErr(true);
     }
   };
 
   const handleKey = (e) => {
-    e.code === "Enter" && handleSearch();
+    (e.code === "Enter" || e.type === "click") && handleSearch();
   };
 
   const handleSelect = async () => {
@@ -91,15 +112,32 @@ const Search = () => {
           onChange={(e) => setUsername(e.target.value)}
           value={username}
         />
+        <label onClick={handleSearch}>
+          <span class="material-symbols-outlined">search</span>
+        </label>
       </div>
       {err && <span>User not found!</span>}
+      {
+        //   {user && (
+        //   <div className="userChat" onClick={handleSelect}>
+        //     <img src={user.photoURL} alt="" />
+        //     <div className="userChatInfo">
+        //       <span>{user.displayName}</span>
+        //     </div>
+        //   </div>
+        // )}
+      }
       {user && (
-        <div className="userChat" onClick={handleSelect}>
-          <img src={user.photoURL} alt="" />
-          <div className="userChatInfo">
-            <span>{user.displayName}</span>
-          </div>
-        </div>
+        <>
+          {user.map((user) => (
+            <div className="userChat" onClick={handleSelect}>
+              <img src={user.photoURL} alt="" />
+              <div className="userChatInfo">
+                <span>{user.displayName}</span>
+              </div>
+            </div>
+          ))}
+        </>
       )}
     </div>
   );
