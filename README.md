@@ -2,7 +2,7 @@
 
 ## A real-time chat application built with React and Node.js.
 
-## Deploy Link :- https://646fbefad54e571d7a07f2b7--lovely-tiramisu-584175.netlify.app/
+## Deploy Link :- https://647364a77d4ce0417831a03a--sensational-lollipop-7f337f.netlify.app/
 
 ## Description
 
@@ -14,6 +14,9 @@ The Chat Application is a web-based chat platform that allows users to communica
 - User authentication and registration
 - Send and receive messages within chat rooms
 - send images
+- send documents
+- download documents
+- video calls
 
 ## Technologies Used
 
@@ -23,6 +26,8 @@ The Chat Application is a web-based chat platform that allows users to communica
 - Firebase
 - HTML
 - sass
+- chatGPT
+- zegocloud
 
 ## Getting Started
 

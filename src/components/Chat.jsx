@@ -1,18 +1,35 @@
-import React, { useContext } from "react";
+import React, { useCallback, useContext } from "react";
 import Cam from "../images/cam.png";
-import Add from "../images/add.png";
-import More from "../images/more.png";
+
 import Input from "./Input";
 import Messages from "./Messages";
 import { ChatContext } from "../context/ChatContext";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/Auth";
+
 const Chat = () => {
+  const navigate = useNavigate();
   const { data } = useContext(ChatContext);
+  const {  setNewUser} =
+    useContext(AuthContext);
+
+  const handleJoinRoom = useCallback(() => {
+    // console.log(value);
+    setNewUser(data.user.displayName);
+    navigate(`/room/${data.chatId}`);
+  }, [navigate,data.chatId]);
+
+  // console.log(data);
   return (
     <div className="chat">
       <div className="chatInfo">
-        <span>{data.user?.displayName}</span>
+        <div className="title">
+          <span>{data.user?.displayName}</span>
+          <img src={data.user?.photoURL} />
+        </div>
+
         <div className="chatIcons">
-          <img src={Cam} alt="" />
+          <img onClick={handleJoinRoom} src={Cam} alt="" />
         </div>
       </div>
       <Messages />

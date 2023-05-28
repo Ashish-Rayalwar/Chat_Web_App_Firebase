@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../Firebase";
+import { AuthContext } from "../context/Auth";
+
 
 const Login = () => {
   const [err, setErr] = useState(false);
   //   const [loading, setLoading] = useState(false);
+  const { setLoginUsers } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -16,7 +19,7 @@ const Login = () => {
       const email = e.target[0].value;
       const password = e.target[1].value;
       await signInWithEmailAndPassword(auth, email, password);
-      // console.log(res);
+      setLoginUsers((prevUsers) => [...prevUsers, email]);
       navigate("/");
     } catch (error) {
       setErr(true);
@@ -38,7 +41,7 @@ const Login = () => {
           />
 
           <button>Login</button>
-          {err && <span>Something went wrong</span>}
+          {err && <span>User not found, plz check your email or password</span>}
         </form>
         <p>
           Do you have an account? <Link to="/signup">SignUp</Link>

@@ -229,6 +229,27 @@ a {
         justify-content: space-between;
         padding: 10px;
         color: lightgray;
+
+        .title {
+          padding-left: 20px;
+          display: flex;
+          text-align: center;
+          align-items: center;
+          span {
+            font-size: 22px;
+
+            font-family: "georgia";
+            font-weight: bold;
+          }
+
+          img {
+            margin-left: 20px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+          }
+        }
       }
 
       .chatIcons {
